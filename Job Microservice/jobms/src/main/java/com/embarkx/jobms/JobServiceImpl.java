@@ -1,10 +1,17 @@
 package com.embarkx.jobms;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.boot.autoconfigure.batch.BatchProperties.Job;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.embarkx.jobms.DTO.JobWithCompany;
+import com.embarkx.jobms.external.External_Company;
 
 @Service
 public class JobServiceImpl implements JobService{
@@ -15,9 +22,23 @@ public class JobServiceImpl implements JobService{
 		this.jr = jr;
 	}
 
+	public JobWithCompany convertToDto(job job) {
+		JobWithCompany jobWithCompanyDTO = new JobWithCompany();
+		jobWithCompanyDTO.setJob(job);
+		RestTemplate restTemplate = new RestTemplate();
+		External_Company comp = restTemplate.getForObject("http://localhost:8081/companies/1", External_Company.class);
+		jobWithCompanyDTO.setCompany(comp);
+		return jobWithCompanyDTO;
+
+	}
+	
 	@Override
-	public List<job> findAll() {
-		return jr.findAll();
+	public List<JobWithCompany> findAll() {
+		List<job> jobs = jr.findAll();
+		List<JobWithCompany> jobWithCompanyDTOs = new ArrayList<>();
+		
+		return jobs.stream().map(this::convertToDto).collect(Collectors.toList());
+			
 	}
 
 	@Override
