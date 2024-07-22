@@ -5,24 +5,17 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.embarkx.MicroservicesSpring.Company.CompService;
-import com.embarkx.MicroservicesSpring.Company.Company;
-import com.embarkx.MicroservicesSpring.review.Review;
-import com.embarkx.MicroservicesSpring.review.ReviewRepo;
-import com.embarkx.MicroservicesSpring.review.ReviewService;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
 
 	private final ReviewRepo repo;
-	private final CompService compservice;
 	
 	
 
-	public ReviewServiceImpl(ReviewRepo repo,CompService compservice) {
+	public ReviewServiceImpl(ReviewRepo repo) {
 		super();
 		this.repo = repo;
-		this.compservice = compservice;
 	}
 
 	@Override
@@ -34,35 +27,34 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public boolean addReview(long companyId, Review review) {
-		Company comp = compservice.getCompanyById(companyId);
-		if(comp!=null)
+	
+		if(companyId != 0L && review != null)
 		{
-			review.setCompany(comp);
+			review.setCompanyId(companyId);
 			repo.save(review);
 			return true;
 		}
+		else {
 		return false;
+		}
 	}
 
 	@Override
-	public Review getReview(long companyId, long id) {
-		if(compservice.getCompanyById(companyId)!=null)
-		{
+	public Review getReview(long id) {
 			Optional<Review> op = repo.findById(id); 
 			Review review = op.get();
-			return review;
-		}
-		else
-			return null;
+			if(review != null)
+				return review;
+			else
+				return null;
 	}
 
 	@Override
-	public Review updateReview(long companyId, long id, Review review) {
+	public Review updateReview(long id, Review review) {
 		
-		if(compservice.getCompanyById(companyId)!=null)
-		{
 			Optional<Review> op = repo.findById(id);
 			Review r = op.get();
+			if(r != null) {
 			r.setDescription(review.getDescription());
 			r.setRating(review.getRating());
 			r.setTitle(review.getTitle());
@@ -74,14 +66,14 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 
 	@Override
-	public boolean deleteReview(long companyId, long id) {
+	public boolean deleteReview(long id) {
 		
-		if(compservice.getCompanyById(companyId)!=null && repo.existsById(id))
+		if(repo.existsById(id))
 		{
 			repo.deleteById(id);
 			return true;
 		}
-		else
+		
 			return false;
 	}
 
