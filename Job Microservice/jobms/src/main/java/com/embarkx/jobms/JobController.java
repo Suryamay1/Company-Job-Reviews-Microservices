@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import com.embarkx.jobms.external.External_Company;
 
 @RestController
 public class JobController {
@@ -26,6 +28,9 @@ public class JobController {
 	
 	@GetMapping("/jobs")
 	public ResponseEntity<List<job>> findAll(){
+		RestTemplate restTemplate = new RestTemplate();
+		External_Company comp = restTemplate.getForObject("http://localhost:8081/companies/1", External_Company.class);
+		System.out.println(comp.getCompanyname()+" \n"+comp.getId());
 		return new ResponseEntity<>(jobService.findAll(),HttpStatus.OK);
 	}
 	
