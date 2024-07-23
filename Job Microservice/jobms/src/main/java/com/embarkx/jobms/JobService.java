@@ -2,11 +2,11 @@ package com.embarkx.jobms;
 import java.util.List;
 
 
-import com.embarkx.jobms.DTO.JobWithCompany;
+import com.embarkx.jobms.DTO.JobDTO;
 
 public interface JobService {
 	
-	List<JobWithCompany> findAll();
+	List<JobDTO> findAll();
 	
 	void createJob(job job);
 	
@@ -16,7 +16,7 @@ public interface JobService {
 	
 	int UpdateJobById(long id, job updateJob);
 	
-	JobWithCompany convertToDto(job job);
+	JobDTO convertToDto(job job);
 
-	JobWithCompany getJobById(Long id);
+	JobDTO getJobById(Long id);
 }
