@@ -40,8 +40,8 @@ public class JobController {
 	}
 	
 	@GetMapping("/jobs/{id}")
-	public ResponseEntity<job> getJobById(@PathVariable long id) {
-		job job = jobService.getJobById(id);
+	public ResponseEntity<JobWithCompany> getJobById(@PathVariable long id) {
+		JobWithCompany job = jobService.getJobById(id);
 		if(job != null){
 			return new ResponseEntity<>(job,HttpStatus.OK);
 		} 

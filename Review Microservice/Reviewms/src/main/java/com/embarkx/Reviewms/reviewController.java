@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.embarkx.Reviewms.DTO.ReviewWithCompanyDTO;
+
 @RestController
 @RequestMapping("/reviews")
 public class reviewController {
@@ -26,7 +28,7 @@ public class reviewController {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<Review>> getAllReviews(@RequestParam long companyId)
+	public ResponseEntity<List<ReviewWithCompanyDTO>> getAllReviews(@RequestParam long companyId)
 	{
 		
 		return new ResponseEntity<>(rs.getAllReview(companyId),HttpStatus.OK);

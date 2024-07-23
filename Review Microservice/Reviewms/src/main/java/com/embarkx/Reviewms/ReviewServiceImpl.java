@@ -2,8 +2,14 @@ package com.embarkx.Reviewms;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.embarkx.Reviewms.DTO.ReviewWithCompanyDTO;
+import com.embarkx.Reviewms.external.External_Company;
 
 
 @Service
@@ -11,18 +17,19 @@ public class ReviewServiceImpl implements ReviewService {
 
 	private final ReviewRepo repo;
 	
-	
-
+	@Autowired 
+	RestTemplate restTemplate; 
+	 
 	public ReviewServiceImpl(ReviewRepo repo) {
 		super();
 		this.repo = repo;
 	}
 
 	@Override
-	public List<Review> getAllReview(long companyId) {
+	public List<ReviewWithCompanyDTO> getAllReview(long companyId) {
 		List<Review> reviews = repo.findByCompanyId(companyId);
 		
-		return reviews;
+		return reviews.stream().map(this::ConvertToDTO).collect(Collectors.toList());
 	}
 
 	@Override
@@ -39,15 +46,23 @@ public class ReviewServiceImpl implements ReviewService {
 		}
 	}
 
-	@Override
-	public Review getReview(long id) {
-			Optional<Review> op = repo.findById(id); 
-			Review review = op.get();
-			if(review != null)
-				return review;
-			else
-				return null;
+	public ReviewWithCompanyDTO ConvertToDTO(Review review) {
+
+		//RestTemplate restTemplate = new RestTemplate();  
+		External_Company comp = 
+				restTemplate.getForObject("http://COMPANYMS:8081/companies/"+review.getCompanyId(), External_Company.class);
+		
+		ReviewWithCompanyDTO ReviewWithCompanyDTO = ReviewMapper.ReviewDTOMapper(review, comp);
+		
+		return ReviewWithCompanyDTO;
 	}
+	
+	@Override
+
+	 public Review getReview(long id) { Optional<Review> op = repo.findById(id);
+	 Review review = op.get(); if(review != null) return review; else return null;
+	  }
+	 
 
 	@Override
 	public Review updateReview(long id, Review review) {

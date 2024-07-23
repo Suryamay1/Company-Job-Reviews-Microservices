@@ -10,11 +10,13 @@ public interface JobService {
 	
 	void createJob(job job);
 	
-	job getJobById(long id);
+	//job getJobById(long id);
 	
 	int deleteJobById(long id);
 	
 	int UpdateJobById(long id, job updateJob);
 	
 	JobWithCompany convertToDto(job job);
+
+	JobWithCompany getJobById(Long id);
 }
